@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lingala Express</title>
+  <style>
+    /* ══════════════════════════════════════════
+       Lingala Express v2 — Design épuré + API
+    ══════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:        #10b981;
+      --green-dark:   #059669;
+      --green-light:  #d1fae5;
+      --blue:         #3b82f6;
+      --blue-light:   #dbeafe;
+      --amber:        #f59e0b;
+      --amber-light:  #fef3c7;
+      --bg:           #f8fafc;
+      --surface:      #ffffff;
+      --border:       #e2e8f0;
+      --text-main:    #1e293b;
+      --text-sub:     #64748b;
+      --text-light:   #94a3b8;
+      --red:          #ef4444;
+      --red-light:    #fee2e2;
+      --radius:       12px;
+      --shadow:       0 2px 12px rgba(0,0,0,0.07);
+      --shadow-hover: 0 6px 24px rgba(0,0,0,0.12);
+      --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── EN-TÊTE ──────────────────────────── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow);
+    }
+    .header-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .logo { display: flex; align-items: center; gap: 8px; }
+    .logo-icon { font-size: 1.5rem; }
+    .logo-text { font-size: 1.35rem; color: var(--text-main); letter-spacing: -0.5px; }
+    .logo-text strong { color: var(--green); }
+
+    .lang-toggle {
+      padding: 7px 18px;
+      border: 2px solid var(--green);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--green);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: var(--font);
+      white-space: nowrap;
+    }
+    .lang-toggle:hover { background: var(--green); color: white; }
+
+    /* ── NAVIGATION PAR ONGLETS ───────────── */
+    .tabs-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 16px;
+    }
+    .tabs-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      gap: 0;
+    }
+    .tab-btn {
+      padding: 14px 20px;
+      border: none;
+      border-bottom: 3px solid transparent;
+      background: transparent;
+      color: var(--text-light);
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: var(--font);
+      white-space: nowrap;
+    }
+    .tab-btn:hover { color: var(--text-sub); }
+    .tab-btn.active { color: var(--green); border-bottom-color: var(--green); }
+
+    /* ── CONTENU DES ONGLETS ──────────────── */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* ── MOT DU JOUR ──────────────────────── */
+    .wod-section {
+      max-width: 960px;
+      margin: 24px auto;
+      padding: 0 16px;
+    }
+    .wod-card {
+      background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+      border-radius: 16px;
+      padding: 28px;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 8px 32px rgba(16,185,129,0.25);
+    }
+    .wod-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      opacity: 0.8;
+    }
+    .wod-lingala { font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; }
+    .wod-phonetic { font-size: 0.85rem; opacity: 0.75; font-style: italic; }
+    .wod-divider { width: 40px; height: 2px; background: rgba(255,255,255,0.4); border-radius: 2px; margin: 4px 0; }
+    .wod-translation { font-size: 1.1rem; font-weight: 500; opacity: 0.95; }
+    .wod-category {
+      display: inline-block;
+      margin-top: 4px;
+      padding: 4px 12px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      width: fit-content;
+    }
+
+    /* ── PHRASEBOOK ───────────────────────── */
+    .search-section {
+      padding: 20px 16px 12px;
+      max-width: 960px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .search-wrapper { position: relative; display: flex; align-items: center; }
+    .search-icon { position: absolute; left: 14px; font-size: 1rem; pointer-events: none; }
+    #searchInput {
+      width: 100%;
+      padding: 12px 16px 12px 42px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+      font-family: var(--font);
+      color: var(--text-main);
+      background: var(--surface);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    #searchInput::placeholder { color: var(--text-light); }
+    #searchInput:focus { border-color: var(--green); }
+
+    .categories-section {
+      padding: 0 16px 14px;
+      max-width: 960px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .categories-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+    .categories-scroll::-webkit-scrollbar { display: none; }
+    .cat-btn {
+      padding: 7px 16px;
+      border: 2px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--text-sub);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+      font-family: var(--font);
+      flex-shrink: 0;
+    }
+    .cat-btn:hover { border-color: var(--green); color: var(--green); }
+    .cat-btn.active { background: var(--green); border-color: var(--green); color: white; }
+
+    .results-count {
+      max-width: 960px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 0 16px 10px;
+      font-size: 0.78rem;
+      color: var(--text-light);
+    }
+
+    main {
+      flex: 1;
+      padding: 0 16px 40px;
+      max-width: 960px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      transition: transform 0.18s, box-shadow 0.18s;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+    .card-lingala { font-size: 1.2rem; font-weight: 700; color: var(--text-main); }
+    .card-phonetic { font-size: 0.77rem; color: var(--text-light); font-style: italic; }
+    .card-divider { width: 28px; height: 2px; background: var(--green); border-radius: 2px; margin: 4px 0; }
+    .card-translation { font-size: 0.93rem; color: var(--text-sub); font-weight: 500; }
+    .card-badge {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 3px 10px;
+      background: var(--green-light);
+      color: var(--green-dark);
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      width: fit-content;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-light);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .no-results span { font-size: 2.5rem; }
+
+    /* ── TRADUCTEUR LIVE ──────────────────── */
+    .translator-section {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+
+    .translator-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .translator-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .translator-header h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .api-badge {
+      padding: 3px 10px;
+      background: var(--blue-light);
+      color: var(--blue);
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .translator-controls {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .lang-select-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      min-width: 200px;
+    }
+    .lang-select-group label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      white-space: nowrap;
+    }
+    .lang-select {
+      padding: 8px 12px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-family: var(--font);
+      color: var(--text-main);
+      background: var(--surface);
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .lang-select:focus { border-color: var(--blue); }
+
+    .translator-input-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    #translateInput {
+      flex: 1;
+      padding: 12px 16px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+      font-family: var(--font);
+      color: var(--text-main);
+      background: var(--surface);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    #translateInput::placeholder { color: var(--text-light); }
+    #translateInput:focus { border-color: var(--blue); }
+    #translateInput:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .btn-translate {
+      padding: 12px 24px;
+      background: var(--blue);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .btn-translate:hover { background: #2563eb; }
+    .btn-translate:active { transform: scale(0.97); }
+    .btn-translate:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* Résultat de traduction */
+    .translation-result { display: none; }
+    .translation-result.visible { display: block; }
+
+    .result-box {
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 12px;
+    }
+    .result-box.success {
+      background: var(--green-light);
+      border: 1px solid #6ee7b7;
+    }
+    .result-box.error {
+      background: var(--red-light);
+      border: 1px solid #fca5a5;
+    }
+    .result-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+    .result-lingala {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--green-dark);
+      letter-spacing: -0.3px;
+    }
+    .result-error-text {
+      font-size: 0.95rem;
+      color: var(--red);
+      font-weight: 500;
+    }
+    .result-meta {
+      margin-top: 8px;
+      font-size: 0.78rem;
+      color: var(--text-light);
+    }
+    .result-quality {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-top: 6px;
+    }
+    .quality-high { background: var(--green-light); color: var(--green-dark); }
+    .quality-low  { background: var(--amber-light); color: #92400e; }
+
+    /* Spinner de chargement */
+    .spinner-wrap {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 0;
+      color: var(--text-sub);
+      font-size: 0.88rem;
+    }
+    .spinner-wrap.visible { display: flex; }
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 3px solid var(--border);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Info API */
+    .api-info {
+      padding: 14px 16px;
+      background: var(--blue-light);
+      border-radius: var(--radius);
+      border: 1px solid #bfdbfe;
+      font-size: 0.82rem;
+      color: #1e40af;
+      line-height: 1.6;
+    }
+    .api-info strong { font-weight: 700; }
+
+    /* Historique des traductions */
+    .history-section {
+      margin-top: 24px;
+    }
+    .history-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-sub);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      gap: 12px;
+    }
+    .history-source { color: var(--text-sub); flex: 1; }
+    .history-arrow { color: var(--text-light); font-size: 0.75rem; }
+    .history-lingala { font-weight: 700; color: var(--green-dark); flex: 1; text-align: right; }
+
+    /* ── PIED DE PAGE ─────────────────────── */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 16px;
+      font-size: 0.78rem;
+      color: var(--text-light);
+    }
+
+    /* ── RESPONSIVE ───────────────────────── */
+    @media (max-width: 480px) {
+      .logo-text { font-size: 1.15rem; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .translator-input-row { flex-direction: column; }
+      .btn-translate { width: 100%; }
+      .wod-lingala { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ EN-TÊTE ═══ -->
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">🌿</span>
+        <span class="logo-text">Lingala <strong>Express</strong></span>
+      </div>
+      <button class="lang-toggle" onclick="toggleLanguage()">
+        <span id="langLabel">🇬🇧 English</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ═══ NAVIGATION PAR ONGLETS ═══ -->
+  <div class="tabs-bar">
+    <div class="tabs-inner">
+      <button class="tab-btn active" onclick="switchTab('wod', this)"    id="tab-wod">📅 Mot du Jour</button>
+      <button class="tab-btn"        onclick="switchTab('phrase', this)" id="tab-phrase">📖 Phrasebook</button>
+      <button class="tab-btn"        onclick="switchTab('trad', this)"   id="tab-trad">⚡ Traducteur Live</button>
+    </div>
+  </div>
+
+  <!-- ═══ ONGLET 1 : MOT DU JOUR ═══ -->
+  <div class="tab-content active" id="content-wod">
+    <div class="wod-section">
+      <div class="wod-card" id="wodCard">
+        <!-- Rempli par JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ ONGLET 2 : PHRASEBOOK ═══ -->
+  <div class="tab-content" id="content-phrase">
+    <section class="search-section">
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput"
+          placeholder="Chercher un mot en lingala ou en français..."
+          oninput="filterCards()" />
+      </div>
+    </section>
+
+    <section class="categories-section">
+      <div class="categories-scroll">
+        <button class="cat-btn active" data-cat="all"         onclick="selectCategory(this)">Tout</button>
+        <button class="cat-btn"        data-cat="salutations" onclick="selectCategory(this)">👋 Salutations</button>
+        <button class="cat-btn"        data-cat="politesse"   onclick="selectCategory(this)">🤝 Politesse</button>
+        <button class="cat-btn"        data-cat="marche"      onclick="selectCategory(this)">🛒 Marché</button>
+        <button class="cat-btn"        data-cat="transport"   onclick="selectCategory(this)">🚕 Transport</button>
+        <button class="cat-btn"        data-cat="urgences"    onclick="selectCategory(this)">🚨 Urgences</button>
+        <button class="cat-btn"        data-cat="chiffres"    onclick="selectCategory(this)">🔢 Chiffres</button>
+      </div>
+    </section>
+
+    <div class="results-count"><span id="resultsCount"></span></div>
+
+    <main>
+      <div class="cards-grid" id="cardsGrid"></div>
+      <div class="no-results" id="noResults" style="display:none;">
+        <span>😕</span>
+        <p id="noResultsText">Aucun mot trouvé. Essayez une autre recherche.</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- ═══ ONGLET 3 : TRADUCTEUR LIVE ═══ -->
+  <div class="tab-content" id="content-trad">
+    <div class="translator-section">
+      <div class="translator-card">
+
+        <div class="translator-header">
+          <h2 id="tradTitle">⚡ Traducteur en direct → Lingala</h2>
+          <span class="api-badge">MyMemory API</span>
+        </div>
+
+        <!-- Sélection de langue source -->
+        <div class="translator-controls">
+          <div class="lang-select-group">
+            <label id="tradLangLabel">Traduire depuis :</label>
+            <select class="lang-select" id="sourceLang">
+              <option value="fr">Français</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Champ de saisie + bouton -->
+        <div class="translator-input-row">
+          <input type="text" id="translateInput"
+            placeholder="Entrez un mot ou une phrase..."
+            onkeydown="if(event.key==='Enter') translate()" />
+          <button class="btn-translate" id="translateBtn" onclick="translate()">
+            <span id="translateBtnText">Traduire</span>
+          </button>
+        </div>
+
+        <!-- Spinner -->
+        <div class="spinner-wrap" id="spinnerWrap">
+          <div class="spinner"></div>
+          <span id="loadingText">Interrogation de MyMemory API...</span>
+        </div>
+
+        <!-- Résultat -->
+        <div class="translation-result" id="translationResult">
+          <div class="result-box" id="resultBox">
+            <div class="result-label" id="resultLabel">Traduction en lingala</div>
+            <div id="resultContent"></div>
+            <div class="result-meta" id="resultMeta"></div>
+          </div>
+        </div>
+
+        <!-- Info API -->
+        <div class="api-info" id="apiInfo">
+          <strong>Source :</strong> MyMemory (mymemory.translated.net) — dictionnaire collaboratif multilingue.
+          Les traductions proviennent de mémoires de traduction humaines et sont constamment enrichies.
+          <br>⚠️ La qualité peut varier pour des mots très spécifiques ou du jargon local.
+        </div>
+
+        <!-- Historique -->
+        <div class="history-section" id="historySection" style="display:none;">
+          <div class="history-title" id="historyTitle">Traductions récentes</div>
+          <div class="history-list" id="historyList"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PIED DE PAGE ═══ -->
+  <footer>
+    <p id="footerText">Lingala Express · Kinshasa, RDC · Apprenez, parlez, vivez 🌍</p>
+  </footer>
+
+  <script>
+    // ══════════════════════════════════════════════════════
+    // BASE DE DONNÉES LOCALE — 61 mots/phrases
+    // ══════════════════════════════════════════════════════
+    const words = [
+      // SALUTATIONS
+      { lingala: "Mbote",             phonetic: "m-BO-teh",              fr: "Bonjour / Salut",                en: "Hello / Hi",              category: "salutations" },
+      { lingala: "Mbote na yo",       phonetic: "m-BO-teh na yo",        fr: "Bonjour (à toi)",                en: "Hello (to you)",          category: "salutations" },
+      { lingala: "Sango nini?",       phonetic: "SAN-go NI-ni",          fr: "Quoi de neuf ?",                 en: "What's up?",              category: "salutations" },
+      { lingala: "Malamu",            phonetic: "ma-LA-mou",             fr: "Bien / Ça va bien",              en: "Good / I'm fine",         category: "salutations" },
+      { lingala: "Nakosepela",        phonetic: "na-ko-SEH-peh-la",      fr: "Je suis content(e)",             en: "I am happy",              category: "salutations" },
+      { lingala: "Na sango te",       phonetic: "na SAN-go teh",         fr: "Rien de spécial",                en: "Nothing special",         category: "salutations" },
+      { lingala: "Tokomonana",        phonetic: "to-ko-mo-NA-na",        fr: "À bientôt",                      en: "See you soon",            category: "salutations" },
+      { lingala: "Kende malamu",      phonetic: "KEN-deh ma-LA-mou",     fr: "Au revoir / Bonne continuation", en: "Goodbye / Take care",    category: "salutations" },
+      { lingala: "Butu malamu",       phonetic: "BOU-tou ma-LA-mou",     fr: "Bonne nuit",                     en: "Good night",              category: "salutations" },
+      { lingala: "Boyei bolamu",      phonetic: "bo-YEI bo-LA-mou",      fr: "Bienvenue",                      en: "Welcome",                 category: "salutations" },
+      // POLITESSE
+      { lingala: "Matondo",           phonetic: "ma-TON-do",             fr: "Merci",                          en: "Thank you",               category: "politesse" },
+      { lingala: "Matondo mingi",     phonetic: "ma-TON-do MIN-gui",     fr: "Merci beaucoup",                 en: "Thank you very much",     category: "politesse" },
+      { lingala: "Ndingisa",          phonetic: "ndin-GI-sa",            fr: "Pardon / Excuse-moi",            en: "Excuse me / Sorry",       category: "politesse" },
+      { lingala: "Bolimbisi ngai",    phonetic: "bo-lim-BI-si ngai",     fr: "Pardonne-moi",                   en: "Forgive me",              category: "politesse" },
+      { lingala: "Awa",               phonetic: "A-wa",                  fr: "Oui",                            en: "Yes",                     category: "politesse" },
+      { lingala: "Te",                phonetic: "teh",                   fr: "Non",                            en: "No",                      category: "politesse" },
+      { lingala: "Nakoki te",         phonetic: "na-KO-ki teh",          fr: "Je ne peux pas",                 en: "I can't",                 category: "politesse" },
+      { lingala: "Nalingi",           phonetic: "na-LIN-gui",            fr: "Je veux / J'aime",               en: "I want / I like",         category: "politesse" },
+      { lingala: "Nalingi te",        phonetic: "na-LIN-gui teh",        fr: "Je ne veux pas",                 en: "I don't want",            category: "politesse" },
+      // MARCHÉ
+      { lingala: "Ntalo ya nini?",    phonetic: "n-TA-lo ya NI-ni",      fr: "C'est combien ?",                en: "How much is it?",         category: "marche" },
+      { lingala: "Penza",             phonetic: "PEN-za",                fr: "Argent",                         en: "Money",                   category: "marche" },
+      { lingala: "Libenga",           phonetic: "li-BEN-ga",             fr: "Gratuit / Pour rien",            en: "Free / For nothing",      category: "marche" },
+      { lingala: "Pamba",             phonetic: "PAM-ba",                fr: "Trop cher !",                    en: "Too expensive!",          category: "marche" },
+      { lingala: "Kota",              phonetic: "KO-ta",                 fr: "Entrer / Viens",                 en: "Enter / Come in",         category: "marche" },
+      { lingala: "Pesá ngai",         phonetic: "PEH-sa ngai",           fr: "Donne-moi",                      en: "Give me",                 category: "marche" },
+      { lingala: "Bilanga",           phonetic: "bi-LAN-ga",             fr: "Légumes",                        en: "Vegetables",              category: "marche" },
+      { lingala: "Mbisi",             phonetic: "m-BI-si",               fr: "Poisson",                        en: "Fish",                    category: "marche" },
+      { lingala: "Nyama",             phonetic: "NYA-ma",                fr: "Viande",                         en: "Meat",                    category: "marche" },
+      { lingala: "Makemba",           phonetic: "ma-KEM-ba",             fr: "Banane plantain",                en: "Plantain banana",         category: "marche" },
+      { lingala: "Loso",              phonetic: "LO-so",                 fr: "Riz",                            en: "Rice",                    category: "marche" },
+      // TRANSPORT
+      { lingala: "Taxi",              phonetic: "TAK-si",                fr: "Taxi",                           en: "Taxi",                    category: "transport" },
+      { lingala: "Tembe",             phonetic: "TEM-beh",               fr: "Moto-taxi",                      en: "Motorcycle taxi",         category: "transport" },
+      { lingala: "Wapi?",             phonetic: "WA-pi",                 fr: "Où ?",                           en: "Where?",                  category: "transport" },
+      { lingala: "Ná ngai",           phonetic: "na ngai",               fr: "Avec moi",                       en: "With me",                 category: "transport" },
+      { lingala: "Kende!",            phonetic: "KEN-deh",               fr: "Va ! / Allons-y !",             en: "Go! / Let's go!",         category: "transport" },
+      { lingala: "Telema!",           phonetic: "teh-LEH-ma",            fr: "Arrête ! / Stop !",             en: "Stop!",                   category: "transport" },
+      { lingala: "Suka",              phonetic: "SOU-ka",                fr: "Fin / Terminus",                 en: "End / Last stop",         category: "transport" },
+      { lingala: "Pembeni",           phonetic: "pem-BEH-ni",            fr: "À côté / Près de",              en: "Next to / Near",          category: "transport" },
+      { lingala: "Mosika",            phonetic: "mo-SI-ka",              fr: "Loin",                           en: "Far",                     category: "transport" },
+      // URGENCES
+      { lingala: "Sungá ngai!",       phonetic: "SOUN-ga ngai",          fr: "Aide-moi !",                    en: "Help me!",                category: "urgences" },
+      { lingala: "Mobulu!",           phonetic: "mo-BOU-lou",            fr: "Au voleur !",                   en: "Thief!",                  category: "urgences" },
+      { lingala: "Moto azali kobela", phonetic: "MO-to a-ZA-li ko-BEH-la", fr: "Quelqu'un est malade",       en: "Someone is sick",         category: "urgences" },
+      { lingala: "Bospi",             phonetic: "BOS-pi",                fr: "Hôpital",                       en: "Hospital",                category: "urgences" },
+      { lingala: "Mondoki",           phonetic: "mon-DO-ki",             fr: "Policier",                      en: "Police officer",          category: "urgences" },
+      { lingala: "Moto!",             phonetic: "MO-to",                 fr: "Feu ! / Incendie !",           en: "Fire!",                   category: "urgences" },
+      { lingala: "Nabuaki",           phonetic: "na-bou-A-ki",           fr: "Je suis perdu(e)",             en: "I am lost",               category: "urgences" },
+      { lingala: "Nabeli te",         phonetic: "na-BEH-li teh",         fr: "Je ne me sens pas bien",       en: "I don't feel well",       category: "urgences" },
+      // CHIFFRES
+      { lingala: "Moko",              phonetic: "MO-ko",                 fr: "Un (1)",                        en: "One (1)",                 category: "chiffres" },
+      { lingala: "Míbalé",            phonetic: "mi-BA-leh",             fr: "Deux (2)",                      en: "Two (2)",                 category: "chiffres" },
+      { lingala: "Mísambo",           phonetic: "mi-SAM-bo",             fr: "Trois (3)",                     en: "Three (3)",               category: "chiffres" },
+      { lingala: "Mínei",             phonetic: "mi-NEI",                fr: "Quatre (4)",                    en: "Four (4)",                category: "chiffres" },
+      { lingala: "Mítáno",            phonetic: "mi-TA-no",              fr: "Cinq (5)",                      en: "Five (5)",                category: "chiffres" },
+      { lingala: "Motóba",            phonetic: "mo-TO-ba",              fr: "Six (6)",                       en: "Six (6)",                 category: "chiffres" },
+      { lingala: "Nsambo",            phonetic: "n-SAM-bo",              fr: "Sept (7)",                      en: "Seven (7)",               category: "chiffres" },
+      { lingala: "Mwambe",            phonetic: "MWAM-beh",              fr: "Huit (8)",                      en: "Eight (8)",               category: "chiffres" },
+      { lingala: "Libwa",             phonetic: "LIB-wa",                fr: "Neuf (9)",                      en: "Nine (9)",                category: "chiffres" },
+      { lingala: "Zomi",              phonetic: "ZO-mi",                 fr: "Dix (10)",                      en: "Ten (10)",                category: "chiffres" },
+      { lingala: "Zomi na moko",      phonetic: "ZO-mi na MO-ko",        fr: "Onze (11)",                     en: "Eleven (11)",             category: "chiffres" },
+      { lingala: "Ntuku míbalé",      phonetic: "n-TOU-kou mi-BA-leh",   fr: "Vingt (20)",                    en: "Twenty (20)",             category: "chiffres" },
+      { lingala: "Ntuku mítáno",      phonetic: "n-TOU-kou mi-TA-no",    fr: "Cinquante (50)",                en: "Fifty (50)",              category: "chiffres" },
+      { lingala: "Monkama",           phonetic: "mon-KA-ma",             fr: "Cent (100)",                    en: "One hundred (100)",       category: "chiffres" },
+    ];
+
+    // ══════════════════════════════════════════════════════
+    // ÉTAT DE L'APPLICATION
+    // ══════════════════════════════════════════════════════
+    let currentLang     = 'fr';
+    let currentCategory = 'all';
+    let currentSearch   = '';
+    let translateHistory = [];  // Historique des traductions
+
+    // Textes de l'interface selon la langue
+    const ui = {
+      fr: {
+        placeholder:  "Chercher un mot en lingala ou en français...",
+        langLabel:    "🇬🇧 English",
+        noResults:    "Aucun mot trouvé. Essayez une autre recherche.",
+        footer:       "Lingala Express · Kinshasa, RDC · Apprenez, parlez, vivez 🌍",
+        all: "Tout",
+        tabs:         ["📅 Mot du Jour", "📖 Phrasebook", "⚡ Traducteur Live"],
+        wodLabel:     "🌟 MOT DU JOUR",
+        tradTitle:    "⚡ Traducteur en direct → Lingala",
+        tradLangLabel:"Traduire depuis :",
+        tradPlaceholder: "Entrez un mot ou une phrase...",
+        translateBtn: "Traduire",
+        loading:      "Interrogation de MyMemory API...",
+        resultLabel:  "Traduction en lingala",
+        historyTitle: "Traductions récentes",
+        apiInfo:      "<strong>Source :</strong> MyMemory (mymemory.translated.net) — dictionnaire collaboratif multilingue. Les traductions proviennent de mémoires de traduction humaines. <br>⚠️ La qualité peut varier pour des mots très spécifiques ou du jargon local.",
+        qualityHigh:  "✅ Confiance élevée",
+        qualityLow:   "⚠️ Confiance faible — vérifiez",
+        errNetwork:   "Impossible de joindre l'API. Vérifiez votre connexion internet.",
+        errEmpty:     "Veuillez entrer un mot ou une phrase.",
+        count:        (n) => `${n} mot${n > 1 ? 's' : ''} trouvé${n > 1 ? 's' : ''}`,
+        categories: {
+          salutations: "👋 Salutations", politesse: "🤝 Politesse",
+          marche: "🛒 Marché", transport: "🚕 Transport",
+          urgences: "🚨 Urgences", chiffres: "🔢 Chiffres"
+        },
+      },
+      en: {
+        placeholder:  "Search a word in Lingala or English...",
+        langLabel:    "🇫🇷 Français",
+        noResults:    "No words found. Try a different search.",
+        footer:       "Lingala Express · Kinshasa, DRC · Learn, speak, live 🌍",
+        all: "All",
+        tabs:         ["📅 Word of the Day", "📖 Phrasebook", "⚡ Live Translator"],
+        wodLabel:     "🌟 WORD OF THE DAY",
+        tradTitle:    "⚡ Live Translator → Lingala",
+        tradLangLabel:"Translate from:",
+        tradPlaceholder: "Enter a word or phrase...",
+        translateBtn: "Translate",
+        loading:      "Querying MyMemory API...",
+        resultLabel:  "Lingala translation",
+        historyTitle: "Recent translations",
+        apiInfo:      "<strong>Source:</strong> MyMemory (mymemory.translated.net) — collaborative multilingual dictionary. Translations come from human translation memories. <br>⚠️ Quality may vary for very specific words or local slang.",
+        qualityHigh:  "✅ High confidence",
+        qualityLow:   "⚠️ Low confidence — please verify",
+        errNetwork:   "Cannot reach the API. Check your internet connection.",
+        errEmpty:     "Please enter a word or phrase.",
+        count:        (n) => `${n} word${n > 1 ? 's' : ''} found`,
+        categories: {
+          salutations: "👋 Greetings", politesse: "🤝 Courtesy",
+          marche: "🛒 Market", transport: "🚕 Transport",
+          urgences: "🚨 Emergencies", chiffres: "🔢 Numbers"
+        },
+      }
+    };
+
+    // ══════════════════════════════════════════════════════
+    // MOT DU JOUR — change chaque jour selon la date
+    // ══════════════════════════════════════════════════════
+    function renderWOD() {
+      const t = ui[currentLang];
+      const today = new Date();
+      const dayIndex = Math.floor(today.getTime() / 86400000) % words.length;
+      const word = words[dayIndex];
+      const translation = currentLang === 'fr' ? word.fr : word.en;
+      const badge = t.categories[word.category] || word.category;
+
+      document.getElementById('wodCard').innerHTML = `
+        <div class="wod-label">${t.wodLabel}</div>
+        <div class="wod-lingala">${word.lingala}</div>
+        <div class="wod-phonetic">${word.phonetic}</div>
+        <div class="wod-divider"></div>
+        <div class="wod-translation">${translation}</div>
+        <span class="wod-category">${badge}</span>
+      `;
+    }
+
+    // ══════════════════════════════════════════════════════
+    // NAVIGATION PAR ONGLETS
+    // ══════════════════════════════════════════════════════
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('content-' + tabId).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    // ══════════════════════════════════════════════════════
+    // BASCULE FR / EN
+    // ══════════════════════════════════════════════════════
+    function toggleLanguage() {
+      currentLang = currentLang === 'fr' ? 'en' : 'fr';
+      applyUILanguage();
+      renderWOD();
+      renderCards();
+    }
+
+    function applyUILanguage() {
+      const t = ui[currentLang];
+      document.getElementById('langLabel').textContent           = t.langLabel;
+      document.getElementById('searchInput').placeholder         = t.placeholder;
+      document.getElementById('noResultsText').textContent       = t.noResults;
+      document.getElementById('footerText').textContent          = t.footer;
+      document.getElementById('tradTitle').textContent           = t.tradTitle;
+      document.getElementById('tradLangLabel').textContent       = t.tradLangLabel;
+      document.getElementById('translateInput').placeholder      = t.tradPlaceholder;
+      document.getElementById('translateBtnText').textContent    = t.translateBtn;
+      document.getElementById('loadingText').textContent         = t.loading;
+      document.getElementById('apiInfo').innerHTML               = t.apiInfo;
+
+      // Onglets
+      const tabIds = ['tab-wod', 'tab-phrase', 'tab-trad'];
+      tabIds.forEach((id, i) => {
+        document.getElementById(id).textContent = t.tabs[i];
+      });
+
+      // Boutons catégorie
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        const cat = btn.dataset.cat;
+        btn.textContent = cat === 'all' ? t.all : (t.categories[cat] || btn.textContent);
+      });
+
+      // Source langue dans le traducteur
+      const sel = document.getElementById('sourceLang');
+      const val = sel.value;
+      sel.innerHTML = currentLang === 'fr'
+        ? '<option value="fr">Français</option><option value="en">English</option>'
+        : '<option value="fr">French</option><option value="en">English</option>';
+      sel.value = val;
+    }
+
+    // ══════════════════════════════════════════════════════
+    // PHRASEBOOK — filtres et rendu des cartes
+    // ══════════════════════════════════════════════════════
+    function selectCategory(btn) {
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentCategory = btn.dataset.cat;
+      renderCards();
+    }
+
+    function filterCards() {
+      currentSearch = document.getElementById('searchInput').value.toLowerCase().trim();
+      renderCards();
+    }
+
+    function renderCards() {
+      const t       = ui[currentLang];
+      const grid    = document.getElementById('cardsGrid');
+      const noRes   = document.getElementById('noResults');
+      const counter = document.getElementById('resultsCount');
+
+      const filtered = words.filter(w => {
+        const matchCat    = currentCategory === 'all' || w.category === currentCategory;
+        const translation = currentLang === 'fr' ? w.fr : w.en;
+        const matchSearch = currentSearch === '' ||
+          w.lingala.toLowerCase().includes(currentSearch) ||
+          translation.toLowerCase().includes(currentSearch) ||
+          w.phonetic.toLowerCase().includes(currentSearch);
+        return matchCat && matchSearch;
+      });
+
+      counter.textContent = t.count(filtered.length);
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        noRes.style.display = 'flex';
+        return;
+      }
+      noRes.style.display = 'none';
+
+      grid.innerHTML = filtered.map(w => {
+        const translation = currentLang === 'fr' ? w.fr : w.en;
+        const badge = t.categories[w.category] || w.category;
+        return `
+          <div class="card">
+            <div class="card-lingala">${w.lingala}</div>
+            <div class="card-phonetic">${w.phonetic}</div>
+            <div class="card-divider"></div>
+            <div class="card-translation">${translation}</div>
+            <span class="card-badge">${badge}</span>
+          </div>`;
+      }).join('');
+    }
+
+    // ══════════════════════════════════════════════════════
+    // TRADUCTEUR LIVE — MyMemory API
+    // Endpoint : https://api.mymemory.translated.net/get
+    // Paramètres : q (texte), langpair (ex: "fr|ln")
+    // Réponse : { responseData: { translatedText, match } }
+    // ══════════════════════════════════════════════════════
+    async function translate() {
+      const t = ui[currentLang];
+      const input     = document.getElementById('translateInput').value.trim();
+      const sourceLang = document.getElementById('sourceLang').value;
+
+      // Validation
+      if (!input) {
+        showTranslationError(t.errEmpty);
+        return;
+      }
+
+      // Afficher le spinner, bloquer le bouton
+      setTranslating(true);
+      hideResult();
+
+      try {
+        const langPair = `${sourceLang}|ln`; // → Lingala
+        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(input)}&langpair=${encodeURIComponent(langPair)}`;
+
+        const response = await fetch(url);
+
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+
+        const data = await response.json();
+
+        // L'API retourne responseStatus 200 même en cas d'erreur partielle
+        if (data.responseStatus !== 200 && data.responseStatus !== '200') {
+          throw new Error(data.responseMessage || 'API error');
+        }
+
+        const translated = data.responseData.translatedText;
+        const matchScore = parseFloat(data.responseData.match) || 0;
+
+        // Afficher le résultat
+        showTranslationSuccess(input, translated, matchScore, t);
+
+        // Ajouter à l'historique
+        addToHistory(input, translated, sourceLang);
+
+      } catch (err) {
+        showTranslationError(t.errNetwork + ' (' + err.message + ')');
+      } finally {
+        setTranslating(false);
+      }
+    }
+
+    // ── Afficher / masquer spinner ──
+    function setTranslating(active) {
+      const btn   = document.getElementById('translateBtn');
+      const input = document.getElementById('translateInput');
+      const spin  = document.getElementById('spinnerWrap');
+      btn.disabled   = active;
+      input.disabled = active;
+      spin.classList.toggle('visible', active);
+    }
+
+    // ── Afficher un résultat réussi ──
+    function showTranslationSuccess(original, translated, score, t) {
+      const resultBox     = document.getElementById('resultBox');
+      const resultLabel   = document.getElementById('resultLabel');
+      const resultContent = document.getElementById('resultContent');
+      const resultMeta    = document.getElementById('resultMeta');
+      const result        = document.getElementById('translationResult');
+
+      const isHighQuality = score >= 0.5;
+      const qualityLabel  = isHighQuality ? t.qualityHigh : t.qualityLow;
+      const qualityClass  = isHighQuality ? 'quality-high' : 'quality-low';
+
+      resultBox.className = 'result-box success';
+      resultLabel.textContent = t.resultLabel;
+      resultContent.innerHTML = `
+        <div class="result-lingala">${translated}</div>
+        <span class="result-quality ${qualityClass}">${qualityLabel}</span>
+      `;
+      resultMeta.textContent = `"${original}" · Score de correspondance : ${Math.round(score * 100)}%`;
+      result.classList.add('visible');
+    }
+
+    // ── Afficher une erreur ──
+    function showTranslationError(message) {
+      const resultBox     = document.getElementById('resultBox');
+      const resultLabel   = document.getElementById('resultLabel');
+      const resultContent = document.getElementById('resultContent');
+      const resultMeta    = document.getElementById('resultMeta');
+      const result        = document.getElementById('translationResult');
+
+      resultBox.className = 'result-box error';
+      resultLabel.textContent = '❌ Erreur';
+      resultContent.innerHTML = `<div class="result-error-text">${message}</div>`;
+      resultMeta.textContent = '';
+      result.classList.add('visible');
+    }
+
+    function hideResult() {
+      document.getElementById('translationResult').classList.remove('visible');
+    }
+
+    // ── Historique des traductions ──
+    function addToHistory(original, translated, sourceLang) {
+      translateHistory.unshift({ original, translated, sourceLang });
+      if (translateHistory.length > 5) translateHistory.pop();
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const t = ui[currentLang];
+      const section = document.getElementById('historySection');
+      const list    = document.getElementById('historyList');
+      const title   = document.getElementById('historyTitle');
+
+      if (translateHistory.length === 0) {
+        section.style.display = 'none';
+        return;
+      }
+      section.style.display = 'block';
+      title.textContent = t.historyTitle;
+
+      list.innerHTML = translateHistory.map(item => `
+        <div class="history-item">
+          <span class="history-source">${item.original}</span>
+          <span class="history-arrow">→ lingala</span>
+          <span class="history-lingala">${item.translated}</span>
+        </div>
+      `).join('');
+    }
+
+    // ══════════════════════════════════════════════════════
+    // INITIALISATION
+    // ══════════════════════════════════════════════════════
+    applyUILanguage();
+    renderWOD();
+    renderCards();
+  </script>
+
+</body>
+</html>
