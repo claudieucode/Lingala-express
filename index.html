@@ -15,78 +15,131 @@
         <span class="logo-icon">🌿</span>
         <span class="logo-text">Lingala <strong>Express</strong></span>
       </div>
-      <p class="tagline" id="tagline">Apprenez le lingala essentiel à Kinshasa</p>
-      <!-- Bouton bascule de langue -->
-      <button class="lang-toggle" id="langToggle" onclick="toggleLanguage()">
-        <span id="langLabel">🇫🇷 Français</span>
+      <button class="lang-toggle" onclick="toggleLanguage()">
+        <span id="langLabel">🇬🇧 English</span>
       </button>
     </div>
   </header>
 
-  <!-- ═══ BARRE DE RECHERCHE ═══ -->
-  <section class="search-section">
-    <div class="search-wrapper">
-      <span class="search-icon">🔍</span>
-      <input
-        type="text"
-        id="searchInput"
-        placeholder="Chercher un mot en lingala ou en français..."
-        oninput="filterCards()"
-      />
+  <!-- ═══ NAVIGATION PAR ONGLETS ═══ -->
+  <div class="tabs-bar">
+    <div class="tabs-inner">
+      <button class="tab-btn active" id="tab-wod"    onclick="switchTab('wod', this)">📅 Mot du Jour</button>
+      <button class="tab-btn"        id="tab-phrase" onclick="switchTab('phrase', this)">📖 Phrasebook</button>
+      <button class="tab-btn"        id="tab-trad"   onclick="switchTab('trad', this)">⚡ Traducteur Live</button>
     </div>
-  </section>
-
-  <!-- ═══ FILTRES CATÉGORIES ═══ -->
-  <section class="categories-section">
-    <div class="categories-scroll">
-      <button class="cat-btn active" data-cat="all" onclick="selectCategory(this)">
-        Tout
-      </button>
-      <button class="cat-btn" data-cat="salutations" onclick="selectCategory(this)">
-        👋 Salutations
-      </button>
-      <button class="cat-btn" data-cat="politesse" onclick="selectCategory(this)">
-        🤝 Politesse
-      </button>
-      <button class="cat-btn" data-cat="marche" onclick="selectCategory(this)">
-        🛒 Marché
-      </button>
-      <button class="cat-btn" data-cat="transport" onclick="selectCategory(this)">
-        🚕 Transport
-      </button>
-      <button class="cat-btn" data-cat="urgences" onclick="selectCategory(this)">
-        🚨 Urgences
-      </button>
-      <button class="cat-btn" data-cat="chiffres" onclick="selectCategory(this)">
-        🔢 Chiffres
-      </button>
-    </div>
-  </section>
-
-  <!-- ═══ COMPTEUR ═══ -->
-  <div class="results-count">
-    <span id="resultsCount"></span>
   </div>
 
-  <!-- ═══ GRILLE DE CARTES ═══ -->
-  <main>
-    <div class="cards-grid" id="cardsGrid">
-      <!-- Les cartes sont générées par script.js -->
+  <!-- ═══ ONGLET 1 : MOT DU JOUR ═══ -->
+  <div class="tab-content active" id="content-wod">
+    <div class="wod-section">
+      <div class="wod-card" id="wodCard">
+        <!-- Rempli par script.js -->
+      </div>
     </div>
+  </div>
 
-    <!-- Message si aucun résultat -->
-    <div class="no-results" id="noResults" style="display:none;">
-      <span>😕</span>
-      <p id="noResultsText">Aucun mot trouvé. Essayez une autre recherche.</p>
+  <!-- ═══ ONGLET 2 : PHRASEBOOK ═══ -->
+  <div class="tab-content" id="content-phrase">
+    <section class="search-section">
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput"
+          placeholder="Chercher un mot en lingala ou en français..."
+          oninput="filterCards()" />
+      </div>
+    </section>
+
+    <section class="categories-section">
+      <div class="categories-scroll">
+        <button class="cat-btn active" data-cat="all"         onclick="selectCategory(this)">Tout</button>
+        <button class="cat-btn"        data-cat="salutations" onclick="selectCategory(this)">👋 Salutations</button>
+        <button class="cat-btn"        data-cat="politesse"   onclick="selectCategory(this)">🤝 Politesse</button>
+        <button class="cat-btn"        data-cat="marche"      onclick="selectCategory(this)">🛒 Marché</button>
+        <button class="cat-btn"        data-cat="transport"   onclick="selectCategory(this)">🚕 Transport</button>
+        <button class="cat-btn"        data-cat="urgences"    onclick="selectCategory(this)">🚨 Urgences</button>
+        <button class="cat-btn"        data-cat="chiffres"    onclick="selectCategory(this)">🔢 Chiffres</button>
+      </div>
+    </section>
+
+    <div class="results-count"><span id="resultsCount"></span></div>
+
+    <main>
+      <div class="cards-grid" id="cardsGrid"></div>
+      <div class="no-results" id="noResults" style="display:none;">
+        <span>😕</span>
+        <p id="noResultsText">Aucun mot trouvé. Essayez une autre recherche.</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- ═══ ONGLET 3 : TRADUCTEUR LIVE ═══ -->
+  <div class="tab-content" id="content-trad">
+    <div class="translator-section">
+      <div class="translator-card">
+
+        <div class="translator-header">
+          <h2 id="tradTitle">⚡ Traducteur en direct → Lingala</h2>
+          <span class="api-badge">MyMemory API</span>
+        </div>
+
+        <div class="translator-controls">
+          <div class="lang-select-group">
+            <label id="tradLangLabel">Traduire depuis :</label>
+            <select class="lang-select" id="sourceLang">
+              <option value="fr">Français</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="translator-input-row">
+          <input type="text" id="translateInput"
+            placeholder="Entrez un mot ou une phrase..."
+            onkeydown="if(event.key==='Enter') translate()" />
+          <button class="btn-translate" id="translateBtn" onclick="translate()">
+            <span id="translateBtnText">Traduire</span>
+          </button>
+        </div>
+
+        <!-- Spinner de chargement -->
+        <div class="spinner-wrap" id="spinnerWrap">
+          <div class="spinner"></div>
+          <span id="loadingText">Interrogation de MyMemory API...</span>
+        </div>
+
+        <!-- Résultat -->
+        <div class="translation-result" id="translationResult">
+          <div class="result-box" id="resultBox">
+            <div class="result-label" id="resultLabel">Traduction en lingala</div>
+            <div id="resultContent"></div>
+            <div class="result-meta" id="resultMeta"></div>
+          </div>
+        </div>
+
+        <!-- Note sur la source API -->
+        <div class="api-info" id="apiInfo">
+          <strong>Source :</strong> MyMemory (mymemory.translated.net) — dictionnaire collaboratif multilingue.
+          Les traductions proviennent de mémoires de traduction humaines.
+          <br>⚠️ La qualité peut varier pour des mots très spécifiques ou du jargon local.
+        </div>
+
+        <!-- Historique -->
+        <div class="history-section" id="historySection" style="display:none;">
+          <div class="history-title" id="historyTitle">Traductions récentes</div>
+          <div class="history-list" id="historyList"></div>
+        </div>
+
+      </div>
     </div>
-  </main>
+  </div>
 
   <!-- ═══ PIED DE PAGE ═══ -->
   <footer>
     <p id="footerText">Lingala Express · Kinshasa, RDC · Apprenez, parlez, vivez 🌍</p>
   </footer>
 
-  <!-- Scripts (data.js doit être chargé avant script.js) -->
+  <!-- Scripts : data.js doit être chargé avant script.js -->
   <script src="data.js"></script>
   <script src="script.js"></script>
 
